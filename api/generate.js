@@ -6,19 +6,23 @@ const ENDPOINT = "https://nano-gpt.com/api/v1/images/generations";
 const MODEL = "nano-banana"; // Gemini 2.5 Flash Image
 
 // Always-on rules: invent a NEW creature, flat 2D cartoon style.
-const BASE = `Look at the uploaded profile picture and invent ONE brand-new original cute creature ("Doodlemon") inspired by it. Do NOT copy or redraw the original subject — instead create a NEW small mascot creature that borrows its dominant colors, its overall mood/energy, and ONE or two signature features (for example a hat, glasses, fur pattern, horns, ears, or color markings) reinterpreted on the creature. The creature must be original and must NOT be any existing Pokemon or copyrighted character.
+const BASE = `Look at the uploaded profile picture and design ONE original cute mascot creature ("Doodlemon") based on it.
 
-ART STYLE (very important): flat 2D cartoon illustration, clean bold dark outlines, smooth soft cel-shading, cozy warm pastel coloring, simple rounded friendly shapes, big expressive cartoon eyes. Wholesome storybook / sticker vibe. NOT 3D, not a render, not a plush toy, not a photo. Square composition, no text, no watermark, no logo.`;
+CARRY OVER FROM THE PFP (important): the creature must clearly use the pfp's dominant colors as its OWN body/skin colors, its main fur/skin markings or patterns, and its signature accessories and outfit (hat, glasses, jewelry, chain, collar, clothing). Someone seeing them side by side should think "that creature is based on that pfp." It is a NEW creature, not a redraw, but the color scheme, markings and outfit must match the pfp — do not invent unrelated colors.
+
+BODY PLAN (strict): exactly ONE head, TWO arms, and TWO legs. The creature stands upright on two legs like a cute mascot. Do NOT give it four legs, extra limbs, or animal all-fours posture. Keep the body simple, round and chibi.
+
+ART STYLE (very important): flat 2D cartoon illustration, clean bold dark outlines, smooth soft cel-shading, cozy warm pastel coloring, simple rounded friendly shapes, big expressive cartoon eyes. Wholesome storybook / sticker vibe. NOT 3D, not a render, not a plush toy, not a photo. The creature must NOT be any existing Pokemon or copyrighted character. Square composition, no text, no watermark, no logo.`;
 
 const VIBE = [
-  "tiny round fluffy creature, super cute and cozy",
-  "small chubby creature with stubby little limbs",
-  "cute critter with big ears and a fluffy tail",
-  "round blob-like creature with little feet",
-  "small dragon-like creature with tiny wings",
-  "soft kitten-like creature with a curly tail",
-  "little turtle-ish creature with a cute shell",
-  "small bird-like creature with round cheeks",
+  "tiny round fluffy upright creature, super cute and cozy",
+  "small chubby upright creature with short arms and legs",
+  "cute upright critter with big ears and a little tail",
+  "round upright blob-shaped creature with stubby arms and legs",
+  "small upright dragon-like creature with tiny wings",
+  "soft upright kitten-like creature with a curly tail",
+  "small upright creature with a cute rounded shell on its back",
+  "little upright creature with round cheeks and tiny wings",
 ];
 
 const SETTING = [
@@ -118,11 +122,11 @@ export default async function handler(req, res) {
         size: "1024x1024",
         response_format: "b64_json",
         imageDataUrl: `data:${mimeType};base64,${image}`,
-        strength: 0.82,
-        guidance_scale: 8,
+        strength: 0.8,
+        guidance_scale: 10,
         num_inference_steps: 32,
         negative_prompt:
-          "3D render, plush toy, claymation, photorealistic, realistic, glossy plastic, vinyl figure, blurry, low quality, extra limbs, deformed, text, watermark, signature",
+          "four legs, all fours, quadruped, extra limbs, extra arms, extra legs, multiple tails, deformed anatomy, fused limbs, 3D render, plush toy, claymation, photorealistic, realistic, glossy plastic, vinyl figure, blurry, low quality, wrong colors, text, watermark, signature",
         seed: Math.floor(Math.random() * 1e9),
       }),
     });
