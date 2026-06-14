@@ -1,66 +1,87 @@
-// /api/generate — Doodlefies an uploaded pfp via NanoGPT (crypto-funded).
-// Needs env var NANOGPT_API_KEY from nano-gpt.com.
-// Each call procedurally MIXES style building blocks so (almost) every
-// result is a unique combination, while staying on-brand "Doodlemon".
+// /api/generate — Turns an uploaded pfp into a NEW original "Doodlemon" creature
+// in a flat 2D cozy cartoon style (Doodles / Pokemon-illustration look).
+// Provider: NanoGPT (crypto-funded). Needs env var NANOGPT_API_KEY.
 
 const ENDPOINT = "https://nano-gpt.com/api/v1/images/generations";
-const MODEL = "nano-banana"; // Gemini 2.5 Flash Image — glossy plush look
+const MODEL = "nano-banana"; // Gemini 2.5 Flash Image
 
-// Always-on identity rules so the subject stays recognizable, but the ART STYLE
-// must be fully replaced — do not preserve the source's flat/anime/line-art look.
-const BASE = `Completely re-render the subject in this image as an adorable soft 3D "Doodlemon" creature. Keep the same character identity — same species/animal, same colors, same key accessories (hat, glasses, hair, jewelry, chain, clothing, markings) — so it's recognizable as the same character. BUT fully discard the original art style: do NOT keep any flat anime, cartoon, or line-art look. Re-sculpt it as a cute rounded plushie-like 3D character with big simple sparkly eyes and a soft friendly expression, in the style of a soft pastel collectible toy. Square composition, no text, no watermark, no logo.`;
+// Always-on rules: invent a NEW creature, flat 2D cartoon style.
+const BASE = `Look at the uploaded profile picture and invent ONE brand-new original cute creature ("Doodlemon") inspired by it. Do NOT copy or redraw the original subject — instead create a NEW small mascot creature that borrows its dominant colors, its overall mood/energy, and ONE or two signature features (for example a hat, glasses, fur pattern, horns, ears, or color markings) reinterpreted on the creature. The creature must be original and must NOT be any existing Pokemon or copyrighted character.
 
-// --- Style building blocks -------------------------------------------------
-// RENDER weighted toward the glossy-3D "hero" DNA so it always reads Doodlemon.
-const RENDER = [
-  "soft glossy 3D render, rounded squishy plush forms, smooth shiny highlights",
-  "soft glossy 3D render, rounded squishy plush forms, smooth shiny highlights",
-  "soft glossy 3D render, rounded squishy plush forms, smooth shiny highlights",
-  "soft glossy 3D render, rounded squishy plush forms, smooth shiny highlights",
-  "dreamy 3D claymation, matte soft clay textures, chunky rounded forms",
-  "glossy holographic 3D, iridescent pearlescent surfaces, soft inner glow",
-  "soft plush toy / felt fabric look, fuzzy texture, subtle stitching, button eyes",
-  "kawaii chibi 3D, oversized head, tiny body, huge shiny eyes, glossy shading",
-  "smooth vinyl designer-toy 3D, matte finish, clean rounded sculpt",
+ART STYLE (very important): flat 2D cartoon illustration, clean bold dark outlines, smooth soft cel-shading, cozy warm pastel coloring, simple rounded friendly shapes, big expressive cartoon eyes. Wholesome storybook / sticker vibe. NOT 3D, not a render, not a plush toy, not a photo. Square composition, no text, no watermark, no logo.`;
+
+const VIBE = [
+  "tiny round fluffy creature, super cute and cozy",
+  "small chubby creature with stubby little limbs",
+  "cute critter with big ears and a fluffy tail",
+  "round blob-like creature with little feet",
+  "small dragon-like creature with tiny wings",
+  "soft kitten-like creature with a curly tail",
+  "little turtle-ish creature with a cute shell",
+  "small bird-like creature with round cheeks",
+];
+
+const SETTING = [
+  "a flowery meadow", "a cozy cottage garden", "a vast field of wildflowers",
+  "a grassy hilltop", "a sunny sandy beach", "an open sky above the clouds",
+  "a clear shallow lagoon", "a tranquil lily pond", "a snowy village",
+  "an autumn forest path", "a cherry-blossom park", "a glowing enchanted forest",
+  "a whimsical candy land", "a hilltop picnic spot", "a desert oasis",
+  "a misty mountain valley", "a coral reef underwater", "a rooftop garden over a pastel city",
+  "an autumn pumpkin patch", "a bamboo forest", "a floating sky island",
+  "a riverside willow grove", "a mushroom-dotted glade", "a seaside cliff with a lighthouse",
+];
+
+const TIME = [
+  "at golden sunset", "at soft sunrise", "under a bright midday sky",
+  "under a deep starry night", "in dreamy twilight", "on a warm golden afternoon",
+  "under a pastel dawn", "beneath a glowing full moon",
+];
+
+const WEATHER = [
+  "clear skies with fluffy clouds", "a soft drifting mist",
+  "gentle falling snow", "drifting flower petals on the breeze",
+  "a few floating bubbles in the air", "warm sun rays breaking through",
+  "a light sprinkle of rain and a faint rainbow", "calm still air with sparkles",
+];
+
+const FOREGROUND = [
+  "big colorful daisies and grass tufts in front", "smooth rocks and tide pools up close",
+  "little glowing mushrooms in the foreground", "clusters of tulips and clover up front",
+  "lily pads and reeds in front", "scattered autumn leaves up close",
+  "tiny wildflowers and pebbles in front", "soft snow drifts in the foreground",
+  "a wooden fence and a little wheelbarrow nearby", "a checkered picnic blanket and basket up front",
+];
+
+const BACKDROP = [
+  "a winding blue river and rolling hills behind", "layered round cartoon trees in the distance",
+  "tall snow-capped mountains far back", "a calm sea and a small island on the horizon",
+  "soft distant hills under the sky", "a cozy little house on a wooden dock behind",
+  "a faraway pastel village", "a gentle waterfall and cliffs in the distance",
+  "a big setting sun glowing on the horizon", "drifting clouds and floating far-off islands",
+];
+
+const EXTRA = [
+  "fluttering pastel butterflies", "twinkling fireflies", "shooting stars overhead",
+  "little birds gliding by", "floating sparkles and petals", "tiny hearts drifting up",
+  "a friendly dragonfly", "soft glowing dust motes",
 ];
 
 const PALETTE = [
-  "pastel candy palette with rainbow iridescent accents",
-  "cotton-candy pink and baby-blue palette",
-  "mint, lavender and butter-yellow pastel palette",
-  "peach and lavender sunset pastels",
-  "soft holographic pearl palette, pale pink-blue-violet sheen",
-  "dreamy lilac and sky-blue palette with gold sparkle accents",
-  "creamy vanilla and strawberry pastel palette",
-  "soft seafoam, coral and pale gold palette",
+  "warm cozy pastels, soft and inviting",
+  "bright cheerful candy colors",
+  "soft cotton-candy pink and sky-blue tones",
+  "sunny golden and peach tones",
+  "fresh green and sky-blue tones",
+  "dreamy lilac and pink twilight tones",
 ];
 
-const HABITAT = [
-  "floating inside a giant iridescent soap bubble in a soft blue sky with puffy pastel clouds",
-  "in a lush pastel flower garden with big soft balloon-like 3D flowers and gentle sunlight",
-  "in a dreamy pastel galaxy with glowing stars and a soft pastel moon",
-  "on fluffy cotton-candy clouds in pink and blue with floating bubbles",
-  "in a cozy pastel meadow at golden hour with soft rolling hills",
-  "in a soft pastel snowy wonderland with gentle falling snow and frosted trees",
-  "in a calm pastel seaside with soft foamy waves and tiny shells",
-  "in a magical pastel forest clearing with glowing mushrooms and fireflies",
-  "against a simple dreamy pastel gradient sky with cute clouds",
-];
-
-const ACCENT = [
-  "scattered white sparkles and tiny stars",
-  "soft glitter and twinkling sparkles",
-  "drifting little bubbles and sparkles",
-  "gentle bokeh light and sparkles",
-  "tiny floating hearts and sparkles",
-  "soft glowing dust motes and sparkles",
-];
-
-const LIGHT = [
-  "soft diffused lighting, gentle depth of field",
-  "warm soft glow, dreamy soft focus background",
-  "bright airy lighting, clean soft shadows",
-  "soft rim light with a cozy ambient glow",
+const MOOD = [
+  "happy and playful",
+  "sleepy and peaceful",
+  "curious and wide-eyed",
+  "shy and sweet",
+  "excited and energetic",
 ];
 
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
@@ -78,10 +99,11 @@ export default async function handler(req, res) {
     if (!/^image\/(png|jpeg|webp)$/.test(mimeType))
       return res.status(400).json({ error: "Unsupported image type" });
 
-    // Mix one block from each bucket → ~10*8*9*6*4 = 17,000+ combinations.
     const prompt =
-      `${BASE} Style: ${pick(RENDER)}, ${pick(PALETTE)}. ` +
-      `Setting: ${pick(HABITAT)}, with ${pick(ACCENT)}. ${pick(LIGHT)}.`;
+      `${BASE} The creature is a ${pick(VIBE)}, ${pick(MOOD)}. ` +
+      `Color palette: ${pick(PALETTE)}. ` +
+      `Render a rich, detailed, fully-illustrated background with clear foreground, midground and background layers — not an empty backdrop. ` +
+      `Scene: ${pick(SETTING)} ${pick(TIME)}, ${pick(WEATHER)}; ${pick(FOREGROUND)}, ${pick(BACKDROP)}, with ${pick(EXTRA)}.`;
 
     const r = await fetch(ENDPOINT, {
       method: "POST",
@@ -96,11 +118,11 @@ export default async function handler(req, res) {
         size: "1024x1024",
         response_format: "b64_json",
         imageDataUrl: `data:${mimeType};base64,${image}`,
-        strength: 0.85,
-        guidance_scale: 9,
-        num_inference_steps: 34,
+        strength: 0.82,
+        guidance_scale: 8,
+        num_inference_steps: 32,
         negative_prompt:
-          "flat anime, 2D cartoon, line art, cel shading, original art style preserved, sketch, manga, comic, sticker, harsh outlines, photorealistic human",
+          "3D render, plush toy, claymation, photorealistic, realistic, glossy plastic, vinyl figure, blurry, low quality, extra limbs, deformed, text, watermark, signature",
         seed: Math.floor(Math.random() * 1e9),
       }),
     });
