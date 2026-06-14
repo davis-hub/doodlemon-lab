@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doodlemon Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Nunito',sans-serif;color:#2B2B3F;background:#EEF3F9;min-height:100svh;padding:20px}
+  h1{font-family:'Baloo 2',cursive;text-align:center;margin-bottom:14px}
+  .login{max-width:320px;margin:40px auto;display:flex;flex-direction:column;gap:10px}
+  input,button{font-family:'Nunito',sans-serif;font-weight:700;font-size:1rem;padding:12px;border-radius:12px;border:2px solid #cfd8e6}
+  button{background:#F8A7D8;border:none;cursor:pointer;box-shadow:0 3px 0 rgba(43,43,63,.2)}
+  .grid{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px}
+  .card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+  .card img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+  .card .h{padding:6px 8px;font-weight:800;font-size:.8rem}
+  .row{display:flex;gap:6px;padding:0 8px 10px}
+  .row button{flex:1;padding:8px;font-size:.85rem}
+  .ok{background:#9FE8C9}.no{background:#FFB4B4}
+  .msg{text-align:center;font-weight:800;margin:14px}
+</style>
+</head>
+<body>
+<h1>Doodlemon Admin</h1>
+<div class="login" id="login">
+  <input type="password" id="pass" placeholder="admin password">
+  <button id="enter">Enter</button>
+  <p class="msg" id="msg"></p>
+</div>
+<div class="msg" id="status" style="display:none"></div>
+<div class="grid" id="grid"></div>
+<script>
+let PASS='';
+const $=id=>document.getElementById(id);
+$('enter').onclick=load;
+$('pass').addEventListener('keydown',e=>{if(e.key==='Enter')load();});
+
+async function load(){
+  PASS=$('pass').value;
+  const r=await fetch('/api/admin?pass='+encodeURIComponent(PASS));
+  if(r.status===401){$('msg').textContent='Wrong password';return;}
+  const d=await r.json();
+  $('login').style.display='none';$('status').style.display='block';
+  render(d.items||[]);
+}
+function render(items){
+  const grid=$('grid');
+  $('status').textContent=items.length?items.length+' awaiting approval':'Nothing pending 🎉';
+  grid.innerHTML=items.map(it=>
+    '<div class="card" id="c-'+it.id+'"><img src="'+it.image_url+'"><div class="h">@'+esc(it.handle)+'</div>'+
+    '<div class="row"><button class="ok" onclick="act(\''+it.id+'\',\'approve\')">Approve</button>'+
+    '<button class="no" onclick="act(\''+it.id+'\',\'reject\')">Reject</button></div></div>'
+  ).join('');
+}
+async function act(id,action){
+  await fetch('/api/admin',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({pass:PASS,id,action})});
+  const el=document.getElementById('c-'+id);if(el)el.remove();
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+</script>
+</body>
+</html>
