@@ -6,8 +6,9 @@
 const ENDPOINT = "https://nano-gpt.com/api/v1/images/generations";
 const MODEL = "nano-banana"; // Gemini 2.5 Flash Image — glossy plush look
 
-// Always-on identity rules so the subject stays recognizable.
-const BASE = `Redraw the person/character in this image as a "Doodlemon". Keep it clearly recognizable as the same subject — same pose, same face/character, same colors, same key accessories (hat, glasses, hair, jewelry, clothing, markings). Cute, friendly, big simple expressive eyes. Square composition, no text, no watermark, no logo.`;
+// Always-on identity rules so the subject stays recognizable, but the ART STYLE
+// must be fully replaced — do not preserve the source's flat/anime/line-art look.
+const BASE = `Completely re-render the subject in this image as an adorable soft 3D "Doodlemon" creature. Keep the same character identity — same species/animal, same colors, same key accessories (hat, glasses, hair, jewelry, chain, clothing, markings) — so it's recognizable as the same character. BUT fully discard the original art style: do NOT keep any flat anime, cartoon, or line-art look. Re-sculpt it as a cute rounded plushie-like 3D character with big simple sparkly eyes and a soft friendly expression, in the style of a soft pastel collectible toy. Square composition, no text, no watermark, no logo.`;
 
 // --- Style building blocks -------------------------------------------------
 // RENDER weighted toward the glossy-3D "hero" DNA so it always reads Doodlemon.
@@ -15,13 +16,12 @@ const RENDER = [
   "soft glossy 3D render, rounded squishy plush forms, smooth shiny highlights",
   "soft glossy 3D render, rounded squishy plush forms, smooth shiny highlights",
   "soft glossy 3D render, rounded squishy plush forms, smooth shiny highlights",
+  "soft glossy 3D render, rounded squishy plush forms, smooth shiny highlights",
   "dreamy 3D claymation, matte soft clay textures, chunky rounded forms",
   "glossy holographic 3D, iridescent pearlescent surfaces, soft inner glow",
   "soft plush toy / felt fabric look, fuzzy texture, subtle stitching, button eyes",
   "kawaii chibi 3D, oversized head, tiny body, huge shiny eyes, glossy shading",
-  "vinyl designer-toy 3D, smooth matte finish, clean rounded sculpt",
-  "flat 2D doodle sticker, thick clean dark outlines, simple rounded shapes",
-  "soft crayon-and-watercolor storybook illustration, gentle textured washes",
+  "smooth vinyl designer-toy 3D, matte finish, clean rounded sculpt",
 ];
 
 const PALETTE = [
@@ -96,7 +96,11 @@ export default async function handler(req, res) {
         size: "1024x1024",
         response_format: "b64_json",
         imageDataUrl: `data:${mimeType};base64,${image}`,
-        strength: 0.72,
+        strength: 0.85,
+        guidance_scale: 9,
+        num_inference_steps: 34,
+        negative_prompt:
+          "flat anime, 2D cartoon, line art, cel shading, original art style preserved, sketch, manga, comic, sticker, harsh outlines, photorealistic human",
         seed: Math.floor(Math.random() * 1e9),
       }),
     });
