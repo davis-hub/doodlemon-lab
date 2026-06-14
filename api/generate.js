@@ -3,6 +3,7 @@
 // Provider: NanoGPT (crypto-funded). Needs env var NANOGPT_API_KEY.
 
 const ENDPOINT = "https://nano-gpt.com/api/v1/images/generations";
+import { sbConfigured, handleExists, uploadImage, insertEntry } from "./_supabase.js";
 const MODEL = "nano-banana"; // Gemini 2.5 Flash Image
 
 // Always-on rules: invent a NEW creature, flat 2D cartoon style.
@@ -97,11 +98,27 @@ export default async function handler(req, res) {
   if (!apiKey) return res.status(500).json({ error: "Server missing NANOGPT_API_KEY" });
 
   try {
-    const { image, mimeType } = req.body || {};
+    const { image, mimeType, handle } = req.body || {};
     if (!image || !mimeType) return res.status(400).json({ error: "Missing image" });
     if (image.length > 1_400_000) return res.status(413).json({ error: "Image too large" });
     if (!/^image\/(png|jpeg|webp)$/.test(mimeType))
       return res.status(400).json({ error: "Unsupported image type" });
+
+    // Normalize X handle and enforce one generation per handle.
+    const h = String(handle || "").trim().replace(/^@/, "").toLowerCase();
+    if (!/^[a-z0-9_]{1,15}$/.test(h))
+      return res.status(400).json({ error: "Enter a valid X handle (letters, numbers, underscore)." });
+
+    if (sbConfigured()) {
+      try {
+        if (await handleExists(h))
+          return res.status(409).json({ error: "@" + h + " already caught their Doodlemon! One per trainer." });
+      } catch (e) {
+        console.error("handle check failed:", e);
+        // If the check fails, fail safe by blocking rather than allowing infinite spend.
+        return res.status(503).json({ error: "Couldn't verify your handle, try again in a moment." });
+      }
+    }
 
     const prompt =
       `${BASE} Pose: the character is ${pick(VIBE)}, looking ${pick(MOOD)}. ` +
@@ -143,19 +160,35 @@ export default async function handler(req, res) {
     const data = await r.json();
     const item = data?.data?.[0] || null;
 
+    // Normalize the result to base64 + mime regardless of response shape.
+    let outB64 = null, outMime = "image/png";
     if (item?.b64_json) {
-      return res.status(200).json({ image: item.b64_json, mimeType: "image/png" });
-    }
-    if (item?.url) {
+      outB64 = item.b64_json;
+    } else if (item?.url) {
       const imgRes = await fetch(item.url);
       if (!imgRes.ok) throw new Error("Failed to fetch generated image");
       const buf = Buffer.from(await imgRes.arrayBuffer());
-      const outMime = imgRes.headers.get("content-type") || "image/png";
-      return res.status(200).json({ image: buf.toString("base64"), mimeType: outMime });
+      outMime = imgRes.headers.get("content-type") || "image/png";
+      outB64 = buf.toString("base64");
     }
 
-    console.error("Unexpected NanoGPT response:", JSON.stringify(data).slice(0, 800));
-    return res.status(502).json({ error: "No image returned, try again." });
+    if (!outB64) {
+      console.error("Unexpected NanoGPT response:", JSON.stringify(data).slice(0, 800));
+      return res.status(502).json({ error: "No image returned, try again." });
+    }
+
+    // Save to gallery (pending approval) + record the handle so it's one-per-user.
+    if (sbConfigured()) {
+      try {
+        const publicUrl = await uploadImage(h, outB64, outMime);
+        await insertEntry(h, publicUrl);
+      } catch (e) {
+        console.error("save failed:", e);
+        // Still return the image to the user even if saving hiccups.
+      }
+    }
+
+    return res.status(200).json({ image: outB64, mimeType: outMime });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: "Something went wrong, try again." });
