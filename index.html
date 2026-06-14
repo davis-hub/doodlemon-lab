@@ -3,142 +3,83 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Doodlemon Lab — catch your own Doodlemon</title>
-<meta name="description" content="Only 151 Doodlemon exist. But every trainer gets a companion. Upload your pfp and meet yours.">
+<title>Doodlemon Lab — Doodlefy your pfp</title>
+<meta name="description" content="Only 151 Doodlemon exist. Drop your pfp and meet your Doodlemon self.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --sky:#79B9F6;
-    --sky-deep:#5AA3EC;
-    --pink:#F8A7D8;
-    --mint:#9FE8C9;
-    --butter:#FFE08A;
-    --lav:#C9B8F5;
-    --ink:#2B2B3F;
-    --cloud:#FFF6FB;
-  }
+  :root{--sky:#79B9F6;--sky2:#5AA3EC;--pink:#F8A7D8;--mint:#9FE8C9;--butter:#FFE08A;--lav:#C9B8F5;--ink:#2B2B3F;--cloud:#FFF6FB}
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
-  body{
-    font-family:'Nunito',sans-serif;
-    color:var(--ink);
-    background:linear-gradient(180deg,var(--sky) 0%,var(--sky-deep) 55%,#8FCBF2 100%);
-    min-height:100svh;
-    overflow-x:hidden;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-  }
-
-  /* drifting clouds + bubbles */
+  body{font-family:'Nunito',sans-serif;color:var(--ink);
+    background:linear-gradient(180deg,var(--sky),var(--sky2) 60%,#8FCBF2);
+    min-height:100svh;overflow-x:hidden;display:flex;flex-direction:column;align-items:center;
+    -webkit-tap-highlight-color:transparent}
   .scenery{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-  .cloud{
-    position:absolute;background:var(--cloud);border-radius:999px;
-    opacity:.9;filter:drop-shadow(0 6px 0 rgba(248,167,216,.35));
-    animation:drift linear infinite;
-  }
-  .cloud::before,.cloud::after{
-    content:"";position:absolute;background:inherit;border-radius:999px;
-  }
+  .cloud{position:absolute;background:var(--cloud);border-radius:999px;opacity:.9;
+    filter:drop-shadow(0 6px 0 rgba(248,167,216,.35));animation:drift linear infinite}
+  .cloud::before,.cloud::after{content:"";position:absolute;background:inherit;border-radius:999px}
   .cloud::before{width:55%;height:120%;top:-55%;left:14%}
   .cloud::after{width:42%;height:95%;top:-38%;right:12%}
-  .bub{
-    position:absolute;border-radius:50%;
-    background:
-      radial-gradient(circle at 30% 28%,rgba(255,255,255,.95) 0 8%,transparent 26%),
+  .bub{position:absolute;border-radius:50%;
+    background:radial-gradient(circle at 30% 28%,rgba(255,255,255,.95) 0 8%,transparent 26%),
       conic-gradient(from 200deg,rgba(248,167,216,.35),rgba(159,232,201,.35),rgba(255,224,138,.35),rgba(201,184,245,.35),rgba(248,167,216,.35));
-    border:2px solid rgba(255,255,255,.65);
-    animation:rise linear infinite;
-  }
+    border:2px solid rgba(255,255,255,.65);animation:rise linear infinite}
   @keyframes drift{from{transform:translateX(-30vw)}to{transform:translateX(115vw)}}
   @keyframes rise{from{transform:translateY(110svh) scale(.8)}to{transform:translateY(-25svh) scale(1.05)}}
   @media (prefers-reduced-motion:reduce){.cloud,.bub{animation:none}}
-
   main{position:relative;z-index:1;width:100%;max-width:520px;padding:28px 20px 60px;text-align:center}
-
-  .eyebrow{
-    display:inline-block;font-weight:800;font-size:.78rem;letter-spacing:.14em;
-    text-transform:uppercase;color:#fff;background:rgba(43,43,63,.28);
-    padding:6px 14px;border-radius:999px;margin-bottom:14px;
-  }
-  h1{
-    font-family:'Baloo 2',cursive;font-weight:800;line-height:1.04;
-    font-size:clamp(2.1rem,8vw,2.9rem);color:#fff;
-    text-shadow:0 3px 0 rgba(43,43,63,.25);
-  }
-  h1 .rainbow{
-    background:linear-gradient(90deg,#FFD66B,#F8A7D8,#9FE8C9,#C9B8F5);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    text-shadow:none;
-  }
+  .eyebrow{display:inline-block;font-weight:800;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+    color:#fff;background:rgba(43,43,63,.28);padding:6px 14px;border-radius:999px;margin-bottom:14px}
+  h1{font-family:'Baloo 2',cursive;font-weight:800;line-height:1.04;font-size:clamp(2.1rem,8vw,2.9rem);
+    color:#fff;text-shadow:0 3px 0 rgba(43,43,63,.25)}
+  h1 .rainbow{background:linear-gradient(90deg,#FFD66B,#F8A7D8,#9FE8C9,#C9B8F5);
+    -webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none}
   .sub{color:#F2F8FF;font-weight:700;margin:12px auto 30px;max-width:38ch;font-size:1rem}
-
-  /* THE BUBBLE — signature element: upload zone and reveal stage in one */
-  .bubble{
-    position:relative;width:min(78vw,320px);aspect-ratio:1;margin:0 auto;
-    border-radius:50%;cursor:pointer;border:none;
-    background:
-      radial-gradient(circle at 30% 26%,rgba(255,255,255,.95) 0 7%,transparent 24%),
+  .bubble{position:relative;width:min(78vw,320px);aspect-ratio:1;margin:0 auto;border-radius:50%;cursor:pointer;border:none;
+    background:radial-gradient(circle at 30% 26%,rgba(255,255,255,.95) 0 7%,transparent 24%),
       radial-gradient(circle at 72% 80%,rgba(255,255,255,.5) 0 4%,transparent 18%),
       conic-gradient(from 210deg,rgba(248,167,216,.55),rgba(159,232,201,.55),rgba(255,224,138,.55),rgba(201,184,245,.55),rgba(248,167,216,.55));
     box-shadow:0 14px 34px rgba(43,43,63,.22),inset 0 0 0 3px rgba(255,255,255,.75);
-    display:flex;align-items:center;justify-content:center;
-    transition:transform .25s ease;
-    animation:bob 4.5s ease-in-out infinite;
-  }
+    display:flex;align-items:center;justify-content:center;transition:transform .25s;animation:bob 4.5s ease-in-out infinite}
   .bubble:hover{transform:scale(1.03)}
   .bubble:focus-visible{outline:4px solid var(--butter);outline-offset:4px}
   @keyframes bob{0%,100%{translate:0 0}50%{translate:0 -10px}}
   @media (prefers-reduced-motion:reduce){.bubble{animation:none}}
-
   .bubble-inner{width:82%;text-align:center;color:var(--ink);pointer-events:none}
   .bubble-inner .big{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.35rem;line-height:1.15}
   .bubble-inner .small{font-weight:700;font-size:.85rem;opacity:.75;margin-top:6px}
-
-  .bubble img.result, .bubble img.preview{
-    width:88%;height:88%;object-fit:cover;border-radius:50%;
-    pointer-events:none;
-  }
-  .bubble img.preview{opacity:.45;filter:saturate(.7)}
-
+  .bubble img{width:88%;height:88%;object-fit:cover;border-radius:50%;pointer-events:none}
+  .bubble img.preview{opacity:.5;filter:saturate(.7)}
   .bubble.loading .bubble-inner .big{animation:pulse 1.2s ease-in-out infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
-
   .bubble.pop{animation:pop .5s ease}
   @keyframes pop{0%{transform:scale(.6);opacity:.3}70%{transform:scale(1.08)}100%{transform:scale(1)}}
-
   input[type=file]{display:none}
-
   .actions{margin-top:26px;display:flex;flex-direction:column;gap:12px;align-items:center}
-  .btn{
-    font-family:'Baloo 2',cursive;font-weight:700;font-size:1.05rem;
-    border:none;border-radius:999px;padding:14px 30px;cursor:pointer;
-    color:var(--ink);background:var(--butter);
-    box-shadow:0 4px 0 rgba(43,43,63,.3);
-    transition:transform .15s ease;
-    text-decoration:none;display:inline-block;
-  }
+  .btn{font-family:'Baloo 2',cursive;font-weight:700;font-size:1.05rem;border:none;border-radius:999px;
+    padding:14px 30px;cursor:pointer;color:var(--ink);background:var(--butter);
+    box-shadow:0 4px 0 rgba(43,43,63,.3);transition:transform .15s;text-decoration:none;display:inline-block}
   .btn:hover{transform:translateY(-2px)}
   .btn:active{transform:translateY(1px);box-shadow:0 2px 0 rgba(43,43,63,.3)}
   .btn:focus-visible{outline:4px solid #fff;outline-offset:3px}
-  .btn.ghost{background:rgba(255,255,255,.85)}
-  .btn.pink{background:var(--pink)}
-  .hidden{display:none !important}
-
+  .btn.ghost{background:rgba(255,255,255,.85)}.btn.pink{background:var(--pink)}
+  .hidden{display:none!important}
+  .handlewrap{display:flex;align-items:center;gap:4px;margin:18px auto 0;max-width:300px;
+    background:#fff;border:2px solid rgba(255,255,255,.7);border-radius:999px;
+    padding:6px 16px;box-shadow:0 4px 0 rgba(43,43,63,.18)}
+  .handlewrap .at{font-family:'Baloo 2',cursive;font-weight:800;color:var(--ink);font-size:1.1rem}
+  .handlewrap input{flex:1;border:none;outline:none;font-family:'Nunito',sans-serif;
+    font-weight:700;font-size:1rem;color:var(--ink);background:transparent;padding:8px 2px}
   .status{margin-top:16px;font-weight:800;color:#fff;min-height:1.4em}
   .status.err{color:#FFE08A}
-
-  footer{
-    position:relative;z-index:1;margin-top:auto;padding:18px;
-    color:rgba(255,255,255,.85);font-weight:700;font-size:.8rem;text-align:center;
-  }
+  footer{position:relative;z-index:1;margin-top:auto;padding:18px;color:rgba(255,255,255,.85);
+    font-weight:700;font-size:.8rem;text-align:center}
   footer a{color:#fff}
 </style>
 </head>
 <body>
-
 <div class="scenery" aria-hidden="true">
   <div class="cloud" style="width:140px;height:46px;top:8%;animation-duration:70s;animation-delay:-12s"></div>
   <div class="cloud" style="width:90px;height:32px;top:22%;animation-duration:95s;animation-delay:-50s;opacity:.7"></div>
@@ -146,134 +87,117 @@
   <div class="bub" style="width:34px;height:34px;left:8%;animation-duration:22s;animation-delay:-4s"></div>
   <div class="bub" style="width:20px;height:20px;left:78%;animation-duration:18s;animation-delay:-10s"></div>
   <div class="bub" style="width:48px;height:48px;left:88%;animation-duration:28s;animation-delay:-2s"></div>
-  <div class="bub" style="width:16px;height:16px;left:30%;animation-duration:16s;animation-delay:-7s"></div>
 </div>
-
 <main>
   <span class="eyebrow">Doodlemon Lab</span>
-  <h1>Only 151 exist.<br>But <span class="rainbow">every trainer</span><br>gets a companion.</h1>
-  <p class="sub">Drop your pfp in the bubble and meet the Doodlemon that's been following you this whole time.</p>
-
+  <h1>Only 151 exist.<br>But <span class="rainbow">everyone</span><br>can be Doodlefied.</h1>
+  <p class="sub">Drop your pfp in the bubble and meet your Doodlemon self.</p>
   <button class="bubble" id="bubble" aria-label="Upload your profile picture">
     <div class="bubble-inner" id="bubbleInner">
       <div class="big">Tap to add<br>your pfp</div>
-      <div class="small">png · jpg · webp</div>
+      <div class="small">any photo works</div>
     </div>
   </button>
-  <input type="file" id="file" accept="image/png,image/jpeg,image/webp">
+  <input type="file" id="file" accept="image/*">
+
+  <div class="handlewrap hidden" id="handlewrap">
+    <span class="at">@</span>
+    <input id="handle" maxlength="15" placeholder="your X handle" autocapitalize="off" autocomplete="off" spellcheck="false">
+  </div>
 
   <p class="status" id="status" role="status"></p>
-
   <div class="actions">
-    <button class="btn pink hidden" id="generate">Catch my Doodlemon</button>
+    <button class="btn pink hidden" id="generate">Doodlefy me ✨</button>
     <a class="btn hidden" id="download" download="my-doodlemon.png">Save image</a>
-    <a class="btn ghost hidden" id="share" target="_blank" rel="noopener">Share on X</a>
+    <a class="btn ghost hidden" id="share">Share</a>
     <button class="btn ghost hidden" id="again">Try another pfp</button>
   </div>
 </main>
-
-<footer>A community experiment for <a href="https://x.com/Doodlemon151" target="_blank" rel="noopener">@Doodlemon151</a> · not affiliated with Doodles or Pokémon</footer>
-
+<footer><a href="/gallery.html" style="font-size:.95rem">🖼️ See the Doodlemon gallery</a><br><br>A community experiment for <a href="https://x.com/Doodlemon151" target="_blank" rel="noopener">@Doodlemon151</a> · not affiliated with Doodles or Pokémon</footer>
 <script>
-const bubble = document.getElementById('bubble');
-const inner = document.getElementById('bubbleInner');
-const fileInput = document.getElementById('file');
-const statusEl = document.getElementById('status');
-const genBtn = document.getElementById('generate');
-const dlBtn = document.getElementById('download');
-const shareBtn = document.getElementById('share');
-const againBtn = document.getElementById('again');
+const bubble=document.getElementById('bubble'),inner=document.getElementById('bubbleInner'),
+  fileInput=document.getElementById('file'),statusEl=document.getElementById('status'),
+  genBtn=document.getElementById('generate'),dlBtn=document.getElementById('download'),
+  shareBtn=document.getElementById('share'),againBtn=document.getElementById('again'),
+  handleWrap=document.getElementById('handlewrap'),handleInput=document.getElementById('handle');
+let pending=null,busy=false,resultUrl=null;
 
-let pending = null; // {base64, mimeType}
-let busy = false;
-
-bubble.addEventListener('click', () => { if (!busy) fileInput.click(); });
-
-fileInput.addEventListener('change', async () => {
-  const f = fileInput.files[0];
-  if (!f) return;
-  setStatus('');
-  try {
-    pending = await resizeToBase64(f, 512);
-    inner.innerHTML = '<img class="preview" alt="Your pfp preview">';
-    inner.querySelector('img').src = 'data:' + pending.mimeType + ';base64,' + pending.base64;
-    show(genBtn); hide(dlBtn); hide(shareBtn); hide(againBtn);
-  } catch (e) {
-    setStatus("Couldn't read that image — try another one.", true);
-  }
+bubble.addEventListener('click',()=>{if(!busy)fileInput.click();});
+fileInput.addEventListener('change',async()=>{
+  const f=fileInput.files[0];if(!f)return;setStatus('');
+  try{
+    pending=await resizeToBase64(f,768);
+    inner.innerHTML='<img class="preview" alt="Your pfp preview">';
+    inner.querySelector('img').src='data:'+pending.mimeType+';base64,'+pending.base64;
+    show(genBtn);show(handleWrap);hide(dlBtn);hide(shareBtn);hide(againBtn);
+  }catch(e){setStatus("That photo didn't load — try a screenshot or JPG/PNG.",true);}
 });
-
-genBtn.addEventListener('click', async () => {
-  if (!pending || busy) return;
-  busy = true;
-  hide(genBtn);
+genBtn.addEventListener('click',async()=>{
+  if(!pending||busy)return;
+  const h=(handleInput.value||'').trim().replace(/^@/,'');
+  if(!/^[A-Za-z0-9_]{1,15}$/.test(h)){setStatus('Enter your X handle first (letters, numbers, underscore).',true);return;}
+  busy=true;hide(genBtn);hide(handleWrap);
   bubble.classList.add('loading');
-  inner.innerHTML = '<div class="big">Catching…</div><div class="small">a wild Doodlemon approaches</div>';
+  inner.innerHTML='<div class="big">Doodlefying…</div><div class="small">painting your Doodlemon self</div>';
   setStatus('');
-
-  try {
-    const r = await fetch('/api/generate', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ image: pending.base64, mimeType: pending.mimeType })
-    });
-    const data = await r.json();
-    if (!r.ok) throw new Error(data.error || 'Generation failed');
-
-    const url = 'data:' + data.mimeType + ';base64,' + data.image;
-    inner.innerHTML = '<img class="result" alt="Your Doodlemon">';
-    inner.querySelector('img').src = url;
+  try{
+    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({image:pending.base64,mimeType:pending.mimeType,handle:h})});
+    const data=await r.json();
+    if(!r.ok)throw new Error(data.error||'Generation failed');
+    resultUrl='data:'+data.mimeType+';base64,'+data.image;
+    inner.innerHTML='<img alt="Your Doodlemon">';
+    inner.querySelector('img').src=resultUrl;
+    bubble.classList.remove('loading');bubble.classList.add('pop');
+    setTimeout(()=>bubble.classList.remove('pop'),600);
+    dlBtn.href=resultUrl;show(dlBtn);show(shareBtn);show(againBtn);
+  }catch(e){
     bubble.classList.remove('loading');
-    bubble.classList.add('pop');
-    setTimeout(() => bubble.classList.remove('pop'), 600);
-
-    dlBtn.href = url;
-    shareBtn.href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(
-      'I just caught my Doodlemon 🫧 Only 151 official ones exist — get your companion at ' + location.origin + ' @Doodlemon151'
-    );
-    show(dlBtn); show(shareBtn); show(againBtn);
-  } catch (e) {
-    bubble.classList.remove('loading');
-    inner.innerHTML = '<div class="big">It got away!</div><div class="small">tap to try again</div>';
-    setStatus(e.message, true);
-    show(genBtn);
-  } finally {
-    busy = false;
-  }
+    inner.innerHTML='<div class="big">It got shy!</div><div class="small">tap to try again</div>';
+    setStatus(e.message,true);show(genBtn);show(handleWrap);
+  }finally{busy=false;}
 });
-
-againBtn.addEventListener('click', () => {
-  pending = null;
-  fileInput.value = '';
-  inner.innerHTML = '<div class="big">Tap to add<br>your pfp</div><div class="small">png · jpg · webp</div>';
-  hide(dlBtn); hide(shareBtn); hide(againBtn); hide(genBtn);
-  setStatus('');
+shareBtn.addEventListener('click',async()=>{
+  const text='I got Doodlefied 🫧 only 151 Doodlemon exist — meet yours @Doodlemon151';
+  try{
+    if(resultUrl&&navigator.canShare){
+      const blob=await(await fetch(resultUrl)).blob();
+      const file=new File([blob],'my-doodlemon.png',{type:'image/png'});
+      if(navigator.canShare({files:[file]})){await navigator.share({files:[file],text});return;}
+    }
+  }catch(e){}
+  window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(text+' '+location.origin),'_blank');
 });
-
-function resizeToBase64(file, max) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => {
-      const scale = Math.min(1, max / Math.max(img.width, img.height));
-      const c = document.createElement('canvas');
-      c.width = Math.round(img.width * scale);
-      c.height = Math.round(img.height * scale);
-      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-      const dataUrl = c.toDataURL('image/jpeg', 0.88);
-      resolve({ base64: dataUrl.split(',')[1], mimeType: 'image/jpeg' });
-      URL.revokeObjectURL(img.src);
+againBtn.addEventListener('click',()=>{
+  pending=null;resultUrl=null;fileInput.value='';
+  inner.innerHTML='<div class="big">Tap to add<br>your pfp</div><div class="small">any photo works</div>';
+  hide(dlBtn);hide(shareBtn);hide(againBtn);hide(genBtn);hide(handleWrap);setStatus('');
+});
+function resizeToBase64(file,max){
+  return new Promise((resolve,reject)=>{
+    const finish=(srcImg)=>{
+      const scale=Math.min(1,max/Math.max(srcImg.width,srcImg.height));
+      const c=document.createElement('canvas');
+      c.width=Math.round(srcImg.width*scale);c.height=Math.round(srcImg.height*scale);
+      c.getContext('2d').drawImage(srcImg,0,0,c.width,c.height);
+      const dataUrl=c.toDataURL('image/jpeg',0.9);
+      resolve({base64:dataUrl.split(',')[1],mimeType:'image/jpeg'});
     };
-    img.onerror = reject;
-    img.src = URL.createObjectURL(file);
+    if(window.createImageBitmap){
+      createImageBitmap(file).then(bmp=>{finish(bmp);if(bmp.close)bmp.close();})
+        .catch(()=>fallback());
+    }else fallback();
+    function fallback(){
+      const img=new Image();
+      img.onload=()=>{finish(img);URL.revokeObjectURL(img.src);};
+      img.onerror=()=>reject(new Error('decode failed'));
+      img.src=URL.createObjectURL(file);
+    }
   });
 }
-
-function setStatus(msg, err) {
-  statusEl.textContent = msg;
-  statusEl.classList.toggle('err', !!err);
-}
-function show(el){ el.classList.remove('hidden'); }
-function hide(el){ el.classList.add('hidden'); }
+function setStatus(m,e){statusEl.textContent=m;statusEl.classList.toggle('err',!!e);}
+function show(el){el.classList.remove('hidden');}
+function hide(el){el.classList.add('hidden');}
 </script>
 </body>
 </html>
