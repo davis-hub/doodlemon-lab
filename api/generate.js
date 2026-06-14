@@ -6,23 +6,23 @@ const ENDPOINT = "https://nano-gpt.com/api/v1/images/generations";
 const MODEL = "nano-banana"; // Gemini 2.5 Flash Image
 
 // Always-on rules: invent a NEW creature, flat 2D cartoon style.
-const BASE = `Look at the uploaded profile picture and design ONE original cute mascot creature ("Doodlemon") based on it.
+const BASE = `Redraw the character from the uploaded profile picture as a full-body "Doodlemon" in a cute cartoon style.
 
-CARRY OVER FROM THE PFP (important): the creature must clearly use the pfp's dominant colors as its OWN body/skin colors, its main fur/skin markings or patterns, and its signature accessories and outfit (hat, glasses, jewelry, chain, collar, clothing). Someone seeing them side by side should think "that creature is based on that pfp." It is a NEW creature, not a redraw, but the color scheme, markings and outfit must match the pfp — do not invent unrelated colors.
+KEEP THE SAME CHARACTER (important): same species/animal, same exact colors and skin/fur, same markings and patterns, same face, same eye color, and ALL the same accessories and outfit (hat, glasses, jewelry, chain, collar, clothing). It must clearly be the SAME character from the pfp — do not change its colors, do not turn it into a different creature.
 
-BODY PLAN (strict): exactly ONE head, TWO arms, and TWO legs. The creature stands upright on two legs like a cute mascot. Do NOT give it four legs, extra limbs, or animal all-fours posture. Keep the body simple, round and chibi.
+GIVE IT A FULL BODY (important): the pfp may only show the head or upper body, so naturally extend it into a complete, correctly-proportioned full-body character — exactly ONE head, TWO arms, TWO legs, standing upright in a cute relaxed pose. Proportions should be chibi/cartoon-cute (slightly big head, small rounded body), anatomy clean and correct, no extra or missing limbs.
 
-ART STYLE (very important): flat 2D cartoon illustration, clean bold dark outlines, smooth soft cel-shading, cozy warm pastel coloring, simple rounded friendly shapes, big expressive cartoon eyes. Wholesome storybook / sticker vibe. NOT 3D, not a render, not a plush toy, not a photo. The creature must NOT be any existing Pokemon or copyrighted character. Square composition, no text, no watermark, no logo.`;
+ART STYLE (important): flat 2D doodle cartoon illustration — clean bold dark outlines, smooth soft cel-shading, cozy warm coloring, simple rounded friendly shapes, big expressive cartoon eyes. Wholesome storybook / sticker vibe. NOT 3D, not a render, not a plush toy, not a photo. Square composition, no text, no watermark, no logo.`;
 
 const VIBE = [
-  "tiny round fluffy upright creature, super cute and cozy",
-  "small chubby upright creature with short arms and legs",
-  "cute upright critter with big ears and a little tail",
-  "round upright blob-shaped creature with stubby arms and legs",
-  "small upright dragon-like creature with tiny wings",
-  "soft upright kitten-like creature with a curly tail",
-  "small upright creature with a cute rounded shell on its back",
-  "little upright creature with round cheeks and tiny wings",
+  "standing in a cute relaxed pose",
+  "standing with a happy little wave",
+  "standing with hands on hips, confident",
+  "standing with arms slightly out, friendly",
+  "standing mid-step like it's walking",
+  "standing with one hand raised cheerfully",
+  "sitting cutely with legs tucked",
+  "standing with hands clasped, shy and sweet",
 ];
 
 const SETTING = [
@@ -104,8 +104,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Unsupported image type" });
 
     const prompt =
-      `${BASE} The creature is a ${pick(VIBE)}, ${pick(MOOD)}. ` +
-      `Color palette: ${pick(PALETTE)}. ` +
+      `${BASE} Pose: the character is ${pick(VIBE)}, looking ${pick(MOOD)}. ` +
       `Render a rich, detailed, fully-illustrated background with clear foreground, midground and background layers — not an empty backdrop. ` +
       `Scene: ${pick(SETTING)} ${pick(TIME)}, ${pick(WEATHER)}; ${pick(FOREGROUND)}, ${pick(BACKDROP)}, with ${pick(EXTRA)}.`;
 
@@ -122,8 +121,8 @@ export default async function handler(req, res) {
         size: "1024x1024",
         response_format: "b64_json",
         imageDataUrl: `data:${mimeType};base64,${image}`,
-        strength: 0.8,
-        guidance_scale: 10,
+        strength: 0.72,
+        guidance_scale: 9,
         num_inference_steps: 32,
         negative_prompt:
           "four legs, all fours, quadruped, extra limbs, extra arms, extra legs, multiple tails, deformed anatomy, fused limbs, 3D render, plush toy, claymation, photorealistic, realistic, glossy plastic, vinyl figure, blurry, low quality, wrong colors, text, watermark, signature",
