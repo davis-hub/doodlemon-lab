@@ -100,14 +100,17 @@ export default async function handler(req, res) {
   try {
     const { image, mimeType, handle } = req.body || {};
     if (!image || !mimeType) return res.status(400).json({ error: "Missing image" });
-    if (image.length > 1_400_000) return res.status(413).json({ error: "Image too large" });
+    if (image.length > 4_000_000) return res.status(413).json({ error: "Image too large" });
     if (!/^image\/(png|jpeg|webp)$/.test(mimeType))
       return res.status(400).json({ error: "Unsupported image type" });
 
     // Normalize X handle and enforce one generation per handle.
-    const h = String(handle || "").trim().replace(/^@/, "").toLowerCase();
-    if (!/^[a-z0-9_]{1,15}$/.test(h))
+    const h = String(handle || "").trim().replace(/^@+/, "").toLowerCase();
+    console.log("generate: received handle =", JSON.stringify(handle), "-> normalized =", JSON.stringify(h));
+    if (!/^[a-z0-9_]{1,15}$/.test(h)) {
+      console.error("rejected handle:", JSON.stringify(h), "len", h.length);
       return res.status(400).json({ error: "Enter a valid X handle (letters, numbers, underscore)." });
+    }
 
     if (sbConfigured()) {
       try {
