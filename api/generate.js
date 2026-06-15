@@ -19,11 +19,25 @@ const VIBE = [
   "standing in a cute relaxed pose",
   "standing with a happy little wave",
   "standing with hands on hips, confident",
-  "standing with arms slightly out, friendly",
-  "standing mid-step like it's walking",
-  "standing with one hand raised cheerfully",
+  "standing with arms spread wide, joyful",
+  "walking mid-step with a cheerful stride",
+  "running playfully with arms out",
+  "jumping in the air with excitement",
   "sitting cutely with legs tucked",
-  "standing with hands clasped, shy and sweet",
+  "sitting cross-legged, relaxed",
+  "lying on its belly, kicking feet up, cozy",
+  "crouching down curiously looking at something",
+  "doing a little dance with arms up",
+  "stretching happily with arms overhead",
+  "giving a thumbs up to the viewer",
+  "holding a single flower, admiring it",
+  "peeking out shyly with hands near face",
+  "leaping forward joyfully",
+  "standing on tiptoes reaching upward",
+  "sitting on a small rock, legs dangling",
+  "striking a cute heroic victory pose",
+  "looking back over its shoulder playfully",
+  "twirling around cheerfully",
 ];
 
 const SETTING = [
@@ -124,7 +138,7 @@ export default async function handler(req, res) {
     }
 
     const prompt =
-      `${BASE} Pose: the character is ${pick(VIBE)}, looking ${pick(MOOD)}. ` +
+      `${BASE} POSE & EXPRESSION: First read the facial expression and mood of the character in the uploaded picture (e.g. cool, grumpy, happy, sleepy, smug, shy, excited, serious, mischievous). Give the full-body Doodlemon a pose and body language that MATCHES that same mood, and keep the same facial expression on its face. For example: a cool/smug pfp gets a confident hands-on-hips or arms-crossed pose; a happy pfp gets a cheerful wave or jump; a sleepy pfp gets a relaxed sitting or yawning pose; a grumpy pfp gets a sulky crossed-arms pose. The pose must feel natural for that personality. ` +
       `Render a rich, detailed, fully-illustrated background with clear foreground, midground and background layers — not an empty backdrop. ` +
       `Scene: ${pick(SETTING)} ${pick(TIME)}, ${pick(WEATHER)}; ${pick(FOREGROUND)}, ${pick(BACKDROP)}, with ${pick(EXTRA)}.`;
 
