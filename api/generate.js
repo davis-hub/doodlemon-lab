@@ -13,7 +13,7 @@ KEEP THE SAME CHARACTER (important): same species/animal, same exact colors and 
 
 GIVE IT A FULL BODY (important): the pfp may only show the head or upper body, so naturally extend it into a complete, correctly-proportioned full-body character — exactly ONE head, TWO arms, TWO legs, standing upright in a cute relaxed pose. Proportions should be chibi/cartoon-cute (slightly big head, small rounded body), anatomy clean and correct, no extra or missing limbs.
 
-ART STYLE (important): flat 2D doodle cartoon illustration — clean bold dark outlines, smooth soft cel-shading, cozy warm coloring, simple rounded friendly shapes, big expressive cartoon eyes. Wholesome storybook / sticker vibe. NOT 3D, not a render, not a plush toy, not a photo. Square composition, no text, no watermark, no logo.`;
+ART STYLE (follow exactly, every time): polished 2D cartoon mascot illustration in a clean, professional Doodles style. Bold even dark outlines of consistent weight. Smooth cel-shading with soft gradient shadows and subtle highlights giving gentle volume (NOT flat single-tone coloring, NOT a flat sticker). Rich warm coloring. Cute rounded chibi proportions with a slightly larger head and small sturdy body, big expressive eyes with a small shine. Confident, finished, high-quality linework. NOT 3D, not a plush toy, not a photo, not pixel art, not a flat sticker, not rough sketchy lines. Square composition, no text, no watermark, no logo.`;
 
 const VIBE = [
   "standing in a cute relaxed pose",
@@ -142,10 +142,10 @@ export default async function handler(req, res) {
         response_format: "b64_json",
         imageDataUrl: `data:${mimeType};base64,${image}`,
         strength: 0.72,
-        guidance_scale: 9,
+        guidance_scale: 11,
         num_inference_steps: 32,
         negative_prompt:
-          "four legs, all fours, quadruped, extra limbs, extra arms, extra legs, multiple tails, deformed anatomy, fused limbs, 3D render, plush toy, claymation, photorealistic, realistic, glossy plastic, vinyl figure, blurry, low quality, wrong colors, text, watermark, signature",
+          "flat sticker, flat single-tone coloring, no shading, sketchy lines, rough lines, inconsistent line weight, pixel art, four legs, all fours, quadruped, extra limbs, extra arms, extra legs, multiple tails, deformed anatomy, fused limbs, 3D render, plush toy, claymation, photorealistic, realistic, glossy plastic, vinyl figure, blurry, low quality, wrong colors, text, watermark, signature",
         seed: Math.floor(Math.random() * 1e9),
       }),
     });
